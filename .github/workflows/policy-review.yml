@@ -1,0 +1,33 @@
+# Example GitHub Action for repos that keep their policies under version control with
+# policyseed. Copy this file into your own repo's .github/workflows/ and adjust paths
+# if your intake.yaml or policies/ directory live somewhere else.
+#
+# It fails the workflow when any policy's last review date has exceeded its
+# review_cadence (see `policyseed check --help`), so an overdue policy shows up as a
+# red check on your default branch and in your weekly run history.
+name: Policy review check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "intake.yaml"
+      - "policies/**"
+  schedule:
+    # Every Monday at 09:00 UTC. Adjust to taste — this only needs to run often enough
+    # that an overdue policy gets noticed within a reasonable window.
+    - cron: "0 9 * * 1"
+  workflow_dispatch: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run policyseed check
+        run: npx --yes github:odedmoshe/policyseed check

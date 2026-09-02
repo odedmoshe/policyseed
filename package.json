@@ -1,0 +1,38 @@
+{
+  "name": "policyseed",
+  "version": "0.1.0",
+  "description": "Free, offline SOC 2 policy generator. Renders 22 governance policy templates from a YAML intake file. Apache-2.0, no LLM, no signup.",
+  "type": "module",
+  "bin": {
+    "policyseed": "./bin/policyseed.js"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odedmoshe/policyseed.git"
+  },
+  "homepage": "https://policyseed.vercel.app",
+  "bugs": {
+    "url": "https://github.com/odedmoshe/policyseed/issues"
+  },
+  "keywords": [
+    "soc2",
+    "policies",
+    "compliance",
+    "templates",
+    "policy-as-code"
+  ],
+  "scripts": {
+    "test": "node --test"
+  }
+}
