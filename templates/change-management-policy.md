@@ -6,10 +6,9 @@ short: Requires that every change to production code, infrastructure and securit
 owner_role: Engineering Lead
 order: 9
 tsc:
-- CC8.1
-- CC6.8
-- CC7.1
 - CC3.4
+- CC5.2
+- CC8.1
 ---
 
 ## 1. Purpose
@@ -18,12 +17,12 @@ Most outages and many security weaknesses are introduced by changes: a rushed ho
 
 ## 2. Scope
 
-This policy applies to all changes to production systems: application code for {{product}}, infrastructure-as-code and cloud configuration on {{cloud}}, database schemas and migrations, container and base images, {{cicd}} configuration, security-relevant settings in third-party services{{#unless idp_none}} including {{idp}}{{/unless}}, {{scm}} organization and repository settings, DNS, certificates, and monitoring and alerting rules. It binds all employees and contractors who author, review, approve or deploy changes and any vendor granted write access to an in-scope system. Work confined to a local development environment is out of scope until it is proposed for production.
+This policy applies to all changes to production systems: application code for {{product}}, infrastructure-as-code and cloud configuration on {{cloud}}, database schemas and migrations, container and base images, {{cicd}} configuration, security-relevant settings in third-party services{{#unless idp_none}} including {{idp}}{{/unless}}, organization and repository settings in {{scm}}, DNS, certificates, and monitoring and alerting rules. It binds all employees and contractors who author, review, approve or deploy changes and any vendor granted write access to an in-scope system. Work confined to a local development environment is out of scope until it is proposed for production.
 
 ## 3. Roles and Responsibilities
 
 - **Executive Management** approves this policy, ensures engineering capacity allows for review and testing, and receives the monthly change report including emergency changes and bypasses.
-- **Security Owner ({{security_owner}})** defines which changes are security-relevant and reviews them, verifies {{scm}} branch protection, samples changes monthly and approves exceptions.
+- **Security Owner ({{security_owner}})** defines which changes are security-relevant and reviews them, verifies branch protection in {{scm}}, samples changes monthly and approves exceptions.
 - **Engineering** authors changes with adequate description and tests, performs peer review, maintains {{cicd}} and its required checks, deploys through the pipeline, monitors after deployment and executes rollbacks.
 - **People Operations** ensures every engineer receives this policy and change process training at onboarding and records acknowledgement.
 - **All Personnel** request changes to systems they do not administer through the ticketing process, never ask an engineer to bypass review, and report suspected unauthorized changes to {{incident_contact}}.
@@ -42,7 +41,7 @@ This policy applies to all changes to production systems: application code for {
 - **4.10** Every change has a documented rollback path: revert the merge, redeploy the previous artifact or disable a feature flag. For high-risk changes the rollback is tested in staging first, and the deploying engineer watches error rates and key metrics for at least 30 minutes after deployment{{#if has_logging_tool}} in {{logging_tool}}{{/if}} and rolls back if the service degrades.
 - **4.11** Development, staging and production are logically separated with distinct credentials, and changes are promoted through staging before production. Production customer data is not copied to lower environments except in anonymized or masked form approved by the Security Owner.
 - **4.12** Changes with potential customer impact are communicated internally before deployment{{#if scope_availability}} and, where downtime or changed behavior is expected, are scheduled in an announced maintenance window and communicated to customers at least 48 hours in advance through the status page or release notes, consistent with {{company}}'s availability commitments{{/if}}. Release notes are published for customer-visible changes.
-- **4.13** Security-relevant configuration changes in systems not managed as code, such as {{scm}} organization settings{{#unless idp_none}}, {{idp}} policies{{/unless}}, vendor administration consoles and DNS, are requested by ticket, approved by the Security Owner and recorded with the before and after state.
+- **4.13** Security-relevant configuration changes in systems not managed as code, such as organization settings in {{scm}}{{#unless idp_none}}, {{idp}} policies{{/unless}}, vendor administration consoles and DNS, are requested by ticket, approved by the Security Owner and recorded with the before and after state.
 - **4.14** The pull request, its review, the check results from {{cicd}} and the deployment record together form the change record and are retained for at least 12 months as audit evidence. Vendors and contractors follow the same process and hold no standing write access to production.
 
 ## 5. Procedures
@@ -54,7 +53,7 @@ This policy applies to all changes to production systems: application code for {
 - **5.5** Infrastructure changes. The author attaches the plan output; the reviewer confirms the resources to be changed match the description and that no unintended destruction is planned. The pipeline applies the change; monthly drift detection finds console changes, which are reconciled into code or reverted.
 - **5.6** Emergency changes. The Engineering lead or Security Owner declares an emergency when an active incident or imminent risk cannot wait for the normal process. A second engineer is notified before the change, approval given verbally or in chat is recorded in the incident ticket, and the change is labeled as an emergency in {{scm}}. Within two business days it receives a full retrospective review and any follow-up fixes, and it appears in the monthly change report.
 - **5.7** Standard change catalogue. Engineering maintains the list of pre-approved standard changes, such as automated dependency updates, content updates and scaling within approved limits, each with its conditions and automated checks. The Security Owner reviews the catalogue semi-annually and removes entries whose risk has changed.
-- **5.8** Monthly change review. The Security Owner samples at least ten percent of production changes and no fewer than five, verifies independent approval, passing checks and a deployment record for each, confirms {{scm}} branch protection settings remain as required, investigates any bypass or emergency change, and summarizes the results to Executive Management.
+- **5.8** Monthly change review. The Security Owner samples at least ten percent of production changes and no fewer than five, verifies independent approval, passing checks and a deployment record for each, confirms branch protection settings in {{scm}} remain as required, investigates any bypass or emergency change, and summarizes the results to Executive Management.
 - **5.9** Deployment access review. Identities used by {{cicd}} to deploy to production are inventoried and reviewed quarterly under the Access Control Policy, confirming each is scoped to one environment, has no interactive login and has been rotated per the Encryption and Key Management Policy.
 
 ## 6. Exceptions
@@ -67,7 +66,7 @@ Bypassing review, disabling branch protection, deploying with personal credentia
 
 ## 8. Review Cadence
 
-The Security Owner reviews this policy on the {{review_cadence}} review cycle and after any significant change to {{company}}'s source control, pipeline tooling or cloud platforms, and after any incident caused by a change. Changes are approved by {{approver}} and recorded in the revision history.
+The Security Owner reviews this policy on the {{review_cadence_lc}} review cycle and after any significant change to {{company}}'s source control, pipeline tooling or cloud platforms, and after any incident caused by a change. Changes are approved by {{approver}} and recorded in the revision history.
 
 ## 9. Revision History
 

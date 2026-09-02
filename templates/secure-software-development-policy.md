@@ -6,10 +6,8 @@ short: Embeds security into how the product is designed, built, tested, dependen
 owner_role: Engineering Lead
 order: 10
 tsc:
+- CC6.8
 - CC8.1
-- CC7.1
-- CC6.1
-- CC6.6
 ---
 
 ## 1. Purpose
@@ -66,7 +64,7 @@ Merging code without review, disabling security checks, committing secrets, usin
 
 ## 8. Review Cadence
 
-The Security Owner reviews this policy on the {{review_cadence}} review cycle and after any significant change to {{company}}'s technology stack, development tooling or threat landscape, and after any security incident attributable to a software defect. Changes are approved by {{approver}} and recorded in the revision history.
+The Security Owner reviews this policy on the {{review_cadence_lc}} review cycle and after any significant change to {{company}}'s technology stack, development tooling or threat landscape, and after any security incident attributable to a software defect. Changes are approved by {{approver}} and recorded in the revision history.
 
 ## 9. Revision History
 

@@ -11,8 +11,9 @@ tsc:
 - CC1.3
 - CC1.5
 - CC2.2
-- CC2.3
 - CC3.1
+- CC4.1
+- CC4.2
 - CC5.1
 - CC5.3
 ---
@@ -58,8 +59,8 @@ The Trust Services Criteria selected for the SOC 2 examination are {{tsc_scope}}
 - **4.2** The program exists to protect the confidentiality, integrity and availability of customer data and company systems; to meet the commitments {{company}} makes in contracts, its terms of service and its privacy notice; to satisfy the {{tsc_scope}} criteria selected for the SOC 2 examination; and to keep risk within the tolerance set by Executive Management.
 - **4.3** Executive Management appoints a Security Owner with the authority to set security requirements, halt changes or releases that create unacceptable risk, and escalate directly to Executive Management. The appointment is documented in the role description of {{security_owner}}.
 - **4.4** Controls are selected and prioritised according to the risks they reduce, as recorded in the risk assessment maintained under the Risk Assessment and Management Policy, not solely because a framework lists them.
-- **4.5** Every policy in this set has a named owner role, an approver, a version number and an effective date, and is reviewed on the {{review_cadence}} cycle and after any significant change to the business, the technology stack or the threat landscape.
-- **4.6** All personnel acknowledge this policy and the Acceptable Use Policy in writing at hire, at each {{review_cadence}} review and after each material revision. Acknowledgements are retained as evidence.
+- **4.5** Every policy in this set has a named owner role, an approver, a version number and an effective date, and is reviewed on the {{review_cadence_lc}} cycle and after any significant change to the business, the technology stack or the threat landscape.
+- **4.6** All personnel acknowledge this policy and the Acceptable Use Policy in writing at hire, at each {{review_cadence_lc}} review and after each material revision. Acknowledgements are retained as evidence.
 - **4.7** Security awareness training is completed within thirty days of the start date and annually thereafter. Engineers also complete secure development training under the Secure Software Development Policy.
 - **4.8** Access follows least privilege and is granted by role under the Access Control Policy. {{#if mfa}}Multi-factor authentication is mandatory for every account that can reach production, source code or customer data.{{/if}}{{#unless mfa}}Multi-factor authentication is required for administrative accounts today and is being extended to all accounts under a plan owned by the Security Owner with a committed completion date.{{/unless}}
 - **4.9** Security is designed into {{product}} rather than added afterwards: production changes follow the Change Management Policy, code is reviewed before merge in {{scm}}, and deployments run through {{cicd}} rather than from personal machines.
@@ -72,10 +73,10 @@ The Trust Services Criteria selected for the SOC 2 examination are {{tsc_scope}}
 
 - **5.1** Annual objectives. In the first quarter of each fiscal year the Security Owner proposes security objectives, a control roadmap and a budget to Executive Management. Approved objectives are recorded in the security program plan and progress is reported quarterly.
 - **5.2** Policy lifecycle. The Security Owner maintains the policy register listing each policy, its owner, version, approval date and next review date. Revisions are approved by {{approver}}, versioned and communicated to affected personnel within ten business days.
-- **5.3** Acknowledgement and training. People Operations collects acknowledgement from every new hire before access is granted and from all personnel at each {{review_cadence}} review, assigns awareness training within thirty days of hire and annually thereafter, and reports outstanding items to the Security Owner monthly. Records are retained for the examination period plus one year.
+- **5.3** Acknowledgement and training. People Operations collects acknowledgement from every new hire before access is granted and from all personnel at each {{review_cadence_lc}} review, assigns awareness training within thirty days of hire and annually thereafter, and reports outstanding items to the Security Owner monthly. Records are retained for seven years under the Data Retention and Disposal Policy.
 - **5.4** Management reporting. The Security Owner delivers a written status report to Executive Management at least quarterly covering open risks, incidents, vulnerability and patch status, access review results, vendor reviews and progress against objectives. Decisions are minuted.
 - **5.5** Control evidence. The Security Owner maintains a control matrix mapping each criterion in scope ({{tsc_scope}}) to the policy statements and evidence artifacts that satisfy it. Evidence is collected on the cadence in the matrix and stored where the CPA firm can be given read access.
-- **5.6** Exceptions. Requests are submitted in writing to the Security Owner stating the statement affected, the justification, compensating controls, the risk owner and an expiry date no more than twelve months out. Approved exceptions are logged in the exception register and reviewed at each {{review_cadence}} review.
+- **5.6** Exceptions. Requests are submitted in writing to the Security Owner stating the statement affected, the justification, compensating controls, the risk owner and an expiry date no more than twelve months out. Approved exceptions are logged in the exception register and reviewed at each {{review_cadence_lc}} review.
 - **5.7** Incident escalation. Anyone who suspects an incident reports it to {{incident_contact}}. The Security Owner triages within one business day under the Incident Response Policy and informs Executive Management of any incident affecting customer data or the availability of {{product}}.
 - **5.8** Independent examination. The Security Owner coordinates scoping, evidence requests, walkthroughs and remediation with the CPA firm. Findings are tracked to closure in the risk register with an owner and due date.
 
@@ -89,7 +90,7 @@ Violations are handled by People Operations with the Security Owner and may resu
 
 ## 8. Review Cadence
 
-The Security Owner reviews this policy at the {{review_cadence}} policy review, after any significant security incident, after material changes to the business, infrastructure or regulatory obligations of {{company}}, and after each SOC 2 examination. Each review is recorded in section 9 even where nothing changes; revisions are approved by {{approver}} before they take effect.
+The Security Owner reviews this policy at the {{review_cadence_lc}} policy review, after any significant security incident, after material changes to the business, infrastructure or regulatory obligations of {{company}}, and after each SOC 2 examination. Each review is recorded in section 9 even where nothing changes; revisions are approved by {{approver}} before they take effect.
 
 ## 9. Revision History
 

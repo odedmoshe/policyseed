@@ -6,10 +6,9 @@ short: Establishes the baseline configuration, protection and lifecycle requirem
 owner_role: IT/Operations Lead
 order: 19
 tsc:
-- CC6.1
+- CC6.6
 - CC6.7
 - CC6.8
-- CC7.1
 ---
 
 ## 1. Purpose
@@ -41,7 +40,7 @@ This policy applies to every laptop, desktop, tablet and smartphone (together, "
 - **4.9** {{#if has_password_manager}}All work credentials are stored in {{password_manager}}. Browser-native password saving is disabled{{#if has_mdm}} through {{mdm}}{{/if}}, and credentials may not be written down, stored in plain-text files or kept in chat history.{{/if}}{{#unless has_password_manager}}Work credentials may not be written down, stored in plain-text files or kept in chat history, and browser-native password saving is disabled on every endpoint. Personnel use a unique password for every system as required by the Authentication and Password Policy.{{/unless}}
 - **4.10** Customer data and production datasets are not stored on endpoints. Where a task requires a local copy, it is limited to the minimum data needed, kept only for the duration of the task and deleted when the task is complete. Production database dumps, backups and exports are never downloaded to a laptop.
 - **4.11** Removable media (USB drives, external disks, SD cards) may not be used to store or move company or customer data; file transfer uses approved cloud storage. {{#if has_mdm}}Where {{mdm}} supports it, writing to removable media is blocked by policy.{{/if}}{{#unless has_mdm}}Personnel confirm compliance with this requirement in the quarterly attestation.{{/unless}}
-- **4.12** The loss, theft or suspected compromise of any endpoint is reported to {{incident_contact}} within four hours of discovery, and at the latest before the next working day begins. {{#if has_mdm}}Lost devices are locked and wiped remotely through {{mdm}}, {{/if}}{{#unless has_mdm}}The user's sessions and credentials are revoked immediately, {{/unless}}and the Incident Response Policy applies.
+- **4.12** The loss, theft or suspected compromise of any endpoint is reported to {{incident_contact}} within one hour of discovery, as the Incident Response Policy requires. {{#if has_mdm}}Lost devices are locked and wiped remotely through {{mdm}}, {{/if}}{{#unless has_mdm}}The user's sessions and credentials are revoked immediately, {{/unless}}and the Incident Response Policy applies.
 - **4.13** Endpoints are wiped to the manufacturer's secure-erase standard before reassignment, return to a lessor or disposal. Devices that cannot be wiped are physically destroyed through an accredited destruction provider, and a record of the wipe or destruction is retained in the device inventory.
 {{#if is_mobile}}- **4.14** Physical devices used to build or test the {{product}} mobile application are treated as endpoints: they are inventoried, encrypted, kept up to date and never contain production customer data. Test accounts and synthetic data are used for all mobile testing.
 {{/if}}
@@ -49,7 +48,7 @@ This policy applies to every laptop, desktop, tablet and smartphone (together, "
 ## 5. Procedures
 
 - **5.1** Procurement and issue. The IT/Operations Lead orders company endpoints from approved suppliers, records the serial number and assigned user in the device inventory, {{#if has_mdm}}enrols the device in {{mdm}} using automated enrolment so that the baseline profiles apply on first boot, {{/if}}{{#unless has_mdm}}configures the device against the baseline checklist and files the completed checklist, {{/unless}}and hands the device over as part of onboarding. Owner: IT/Operations Lead. Timing: before the user's start date, or within one business day of a replacement request.
-- **5.2** Baseline maintenance. The Security Owner maintains the written endpoint baseline (encryption, screen lock, update settings, endpoint protection, firewall, account type, blocked software) and reviews it {{review_cadence}}. {{#if has_mdm}}Engineering keeps the {{mdm}} configuration profiles in step with the baseline and tests changes on a pilot group before company-wide rollout.{{/if}}{{#unless has_mdm}}The IT/Operations Lead updates the setup and attestation checklists within five business days of any baseline change.{{/unless}} Owner: Security Owner. Cadence: {{review_cadence}}.
+- **5.2** Baseline maintenance. The Security Owner maintains the written endpoint baseline (encryption, screen lock, update settings, endpoint protection, firewall, account type, blocked software) and reviews it {{review_cadence_adverb}}. {{#if has_mdm}}Engineering keeps the {{mdm}} configuration profiles in step with the baseline and tests changes on a pilot group before company-wide rollout.{{/if}}{{#unless has_mdm}}The IT/Operations Lead updates the setup and attestation checklists within five business days of any baseline change.{{/unless}} Owner: Security Owner. Cadence: {{review_cadence}}.
 - **5.3** Compliance verification. {{#if has_mdm}}Each month the Security Owner reviews the {{mdm}} compliance report, and any device out of compliance for more than seven days is blocked from company applications until remediated.{{/if}}{{#unless has_mdm}}Each quarter every user completes the endpoint attestation form and attaches evidence of encryption status, operating system version and screen lock settings. The IT/Operations Lead reviews the responses within ten business days and follows up on any gap; access is suspended for anyone who has not attested within 30 days of the request.{{/unless}} Results are retained as evidence. Owner: Security Owner. Cadence: {{#if has_mdm}}monthly{{/if}}{{#unless has_mdm}}quarterly{{/unless}}.
 - **5.4** Patch management. Automatic updates are enabled at issue. {{#if has_mdm}}{{mdm}} enforces update deadlines, and the Security Owner reviews outstanding updates weekly.{{/if}}{{#unless has_mdm}}The Security Owner reviews vendor security bulletins weekly and notifies personnel of any update that must be applied within seven days.{{/unless}} Devices that miss a critical update deadline are removed from production access until updated. Owner: Security Owner. Cadence: weekly review.
 - **5.5** Lost, stolen or compromised device. On report to {{incident_contact}}, the responder{{#if has_mdm}} locks and wipes the device in {{mdm}}, then{{/if}} revokes active sessions in {{#unless idp_none}}{{idp}}{{/unless}}{{#if idp_none}}each system the user can access{{/if}}, rotates the user's credentials{{#if has_password_manager}} and any {{password_manager}} vault items they could have read{{/if}}, and opens an incident record. The device is marked lost in the inventory and a replacement is issued under Section 5.1. Owner: Security Owner. Timing: containment within four hours of the report.
@@ -68,7 +67,7 @@ Devices that do not meet this policy may be blocked from company systems without
 
 ## 8. Review Cadence
 
-The IT/Operations Lead and the Security Owner review this policy on a {{review_cadence}} basis and whenever the device management tooling, operating system mix or working model changes materially. Each review is recorded in Section 9, and changes are communicated to all personnel within 30 days.
+The IT/Operations Lead and the Security Owner review this policy on a {{review_cadence_lc}} basis and whenever the device management tooling, operating system mix or working model changes materially. Each review is recorded in Section 9, and changes are communicated to all personnel within 30 days.
 
 ## 9. Revision History
 

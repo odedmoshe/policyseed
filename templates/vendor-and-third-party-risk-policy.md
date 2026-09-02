@@ -6,9 +6,9 @@ short: Requires vendors to be inventoried, tiered by the data and services they 
 owner_role: Security Owner
 order: 16
 tsc:
-- CC9.2
-- CC3.2
 - CC2.3
+- CC3.2
+- CC9.2
 ---
 
 ## 1. Purpose
@@ -63,7 +63,7 @@ This policy applies to every external organisation that stores, processes or tra
 
 ## 6. Exceptions
 
-Exceptions require written approval from the Security Owner, or from Executive Management for a Tier 1 vendor, a compensating control or accepted risk in the risk register, and an expiry date no more than 12 months away, and are reviewed at each {{review_cadence}} policy review. No exception permits sharing customer data with a vendor that has not signed confidentiality and incident notification terms.
+Exceptions require written approval from the Security Owner, or from Executive Management for a Tier 1 vendor, a compensating control or accepted risk in the risk register, and an expiry date no more than 12 months away, and are reviewed at each {{review_cadence_lc}} policy review. No exception permits sharing customer data with a vendor that has not signed confidentiality and incident notification terms.
 
 ## 7. Enforcement
 
@@ -71,7 +71,7 @@ Adopting a vendor or connecting a service to {{company}} data or accounts withou
 
 ## 8. Review Cadence
 
-The Security Owner reviews this policy on a {{review_cadence}} basis and after any vendor incident affecting {{company}} data, changes to applicable privacy or sector regulation, and the addition of a Tier 1 vendor of a kind not previously used. Each review is approved by {{approver}} and recorded in Section 9.
+The Security Owner reviews this policy on a {{review_cadence_lc}} basis and after any vendor incident affecting {{company}} data, changes to applicable privacy or sector regulation, and the addition of a Tier 1 vendor of a kind not previously used. Each review is approved by {{approver}} and recorded in Section 9.
 
 ## 9. Revision History
 

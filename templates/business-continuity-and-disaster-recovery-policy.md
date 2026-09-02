@@ -6,10 +6,11 @@ short: Sets recovery objectives by system tier, defines how a disaster is declar
 owner_role: Engineering Lead
 order: 14
 tsc:
-- A1.2
-- A1.3
 - CC7.5
 - CC9.1
+- A1.1
+- A1.2
+- A1.3
 ---
 
 ## 1. Purpose
@@ -24,8 +25,8 @@ Systems are classified into three tiers. The tier sets the recovery time objecti
 
 | Tier | Description | Typical systems | RTO | RPO |
 | --- | --- | --- | --- | --- |
-| Tier 1 - Critical | Loss stops customers using {{product}} or exposes customer data | Production application and API, primary database, authentication and sessions, DNS and edge, secrets management, core {{cloud}} accounts | 4 hours | 1 hour |
-| Tier 2 - Important | Needed to operate, support and change {{product}} within one business day | {{scm}} repositories, {{cicd}} pipelines, {{#if has_logging_tool}}{{logging_tool}} monitoring, {{/if}}alerting and on-call tooling, customer support tooling, {{#unless idp_none}}{{idp}} administration, {{/unless}}billing | 24 hours | 24 hours |
+| Tier 1 - Critical | Loss stops customers using {{product}} or exposes customer data | Production application and API, primary database, authentication and sessions, DNS and edge, secrets management, core accounts in {{cloud}} | 4 hours | 1 hour |
+| Tier 2 - Important | Needed to operate, support and change {{product}} within one business day | Repositories in {{scm}}, {{cicd}} pipelines, {{#if has_logging_tool}}{{logging_tool}} monitoring, {{/if}}alerting and on-call tooling, customer support tooling, {{#unless idp_none}}{{idp}} administration, {{/unless}}billing | 24 hours | 24 hours |
 | Tier 3 - Deferrable | Can be unavailable for several days without customer impact | Internal wikis, analytics and reporting, development and staging environments | 5 business days | 7 days |
 
 ## 3. Roles and Responsibilities
@@ -45,7 +46,7 @@ Systems are classified into three tiers. The tier sets the recovery time objecti
 - **4.5** A disaster may be declared by Executive Management, the Security Owner or the Engineering on-call lead when a Tier 1 system has been unavailable or degraded for one hour, the RTO is at risk, or the primary environment cannot be trusted. The declaration records the time, reason and recovery lead.
 - **4.6** During a declared disaster the recovery lead may provision infrastructure, engage vendor support, restore from backups and incur emergency spend within limits set by Executive Management without standard change approval; every action is logged and reviewed afterwards.
 - **4.7** Security controls, including access control, encryption and logging, remain in force during recovery. Emergency access granted to recover a system is time-limited, logged and revoked when recovery is complete.
-- **4.8** {{company}} maintains an alternative communication channel that does not depend on its primary systems, and a contact roster covering personnel, Executive Management, {{cloud}} support, {{#if has_vendors}}{{vendors}}, {{/if}}outside counsel and insurers; personnel learn how to reach the channel during onboarding.
+- **4.8** {{company}} maintains an alternative communication channel that does not depend on its primary systems, and a contact roster covering personnel, Executive Management, support at {{cloud}}, {{#if has_vendors}}{{vendors}}, {{/if}}outside counsel and insurers; personnel learn how to reach the channel during onboarding.
 - **4.9** {{#if remote_or_hybrid}}Because {{company}} operates a {{work_model}} work model, loss of any single workplace does not interrupt operations; personnel work from an alternative location with their managed device. {{/if}}{{#unless remote_or_hybrid}}If the {{company}} workplace becomes unavailable, personnel work remotely using their managed device, and all production access must work without the office network. {{/unless}}No production capability may depend on physical access to an office.
 - **4.10** Tier 1 recovery is tested at least annually by restoring a production-equivalent environment from infrastructure code and backups, and the whole plan is exercised at least annually through a tabletop with Executive Management; achieved recovery times are recorded against the objectives.
 - **4.11** Critical vendors{{#if has_vendors}}, including {{vendors}} where they support Tier 1 or Tier 2 systems,{{/if}} are assessed for continuity risk under the Vendor and Third-Party Risk Management Policy, and every Tier 1 dependency has a documented exit or fallback plan.
@@ -55,7 +56,7 @@ Systems are classified into three tiers. The tier sets the recovery time objecti
 
 ## 5. Procedures
 
-- **5.1** **Business impact analysis.** Each year, and whenever a new customer-facing system is added, the Security Owner and Engineering review the system inventory, confirm each system's tier, document dependencies on {{cloud}} services{{#if has_vendors}} and on {{vendors}}{{/if}}, and estimate the impact of an outage at 1, 4 and 24 hours and 5 days, and Executive Management approves the resulting tier list.
+- **5.1** **Business impact analysis.** Each year, and whenever a new customer-facing system is added, the Security Owner and Engineering review the system inventory, confirm each system's tier, document dependencies on the services of {{cloud}}{{#if has_vendors}} and on {{vendors}}{{/if}}, and estimate the impact of an outage at 1, 4 and 24 hours and 5 days, and Executive Management approves the resulting tier list.
 - **5.2** **Plan maintenance.** Engineering reviews each Tier 1 and Tier 2 recovery procedure at least annually and after any material architecture change, confirming that the infrastructure code in {{scm}} still builds the environment and that restore steps match the backup tooling{{#if has_backup_tool}}, currently {{backup_tool}}{{/if}}. The Security Owner refreshes the contact roster quarterly.
 - **5.3** **Declaration and mobilisation.** When the criteria in 4.5 are met, the declaring person records the declaration, names the recovery lead, opens the alternative channel and notifies Executive Management. The recovery lead assembles the team, assigns a scribe and confirms the affected systems, tiers and start time; security-related disruptions run on one timeline shared with the Incident Commander.
 - **5.4** **Recovery execution.** The recovery team follows the written procedure for each affected system in tier order: identity and secrets first, then data from the most recent backup meeting the RPO, then application infrastructure from {{scm}} through {{cicd}} (or a manual pipeline if {{cicd}} is unavailable), then edge and DNS. The scribe records each step, its timing and any deviation.
@@ -63,12 +64,12 @@ Systems are classified into three tiers. The tier sets the recovery time objecti
 - **5.6** **Communication.** The recovery lead posts an initial customer notice within 30 minutes of declaration and updates at least hourly for Tier 1 disruptions, using wording approved by Executive Management. People Operations confirms personnel safety and communicates working arrangements. Customers with contractual notification terms are notified within those terms.
 - **5.7** **Return to normal.** When objectives are met and verification is complete, the recovery lead declares the end of the disruption, confirms that temporary infrastructure, emergency credentials and firewall exceptions are removed, ensures backups are running against the recovered environment, and schedules the review required by 4.13.
 - **5.8** **Annual technical test.** Engineering restores a Tier 1 environment from infrastructure code and backups into an isolated account or region, measures elapsed time and the age of restored data, and records whether RTO and RPO were achieved, with the runbook used, timestamps, verification evidence and defects found.
-- **5.9** **Annual tabletop.** The Security Owner runs a scenario exercise with Executive Management, Engineering and People Operations, using scenarios such as loss of a {{cloud}} region, ransomware affecting the primary database, or loss of a critical vendor{{#if has_vendors}} such as one of {{vendors}}{{/if}}, and records decisions, gaps and actions.
+- **5.9** **Annual tabletop.** The Security Owner runs a scenario exercise with Executive Management, Engineering and People Operations, using scenarios such as loss of a hosting region at {{cloud}}, ransomware affecting the primary database, or loss of a critical vendor{{#if has_vendors}} such as one of {{vendors}}{{/if}}, and records decisions, gaps and actions.
 - **5.10** **Personnel continuity.** People Operations maintains at least one trained alternate for each role named in a recovery procedure, and reassigns responsibilities within five business days when a person in a recovery role leaves or is on extended absence.
 
 ## 6. Exceptions
 
-Exceptions, including a system that cannot meet its tier's objectives, require written approval from Executive Management on the Security Owner's recommendation, a compensating measure or accepted risk in the risk register, and an expiry date no more than 12 months away, and are reviewed at each {{review_cadence}} policy review. Customer commitments exceeding the Section 2 objectives require Engineering confirmation before signature.
+Exceptions, including a system that cannot meet its tier's objectives, require written approval from Executive Management on the Security Owner's recommendation, a compensating measure or accepted risk in the risk register, and an expiry date no more than 12 months away, and are reviewed at each {{review_cadence_lc}} policy review. Customer commitments exceeding the Section 2 objectives require Engineering confirmation before signature.
 
 ## 7. Enforcement
 
@@ -76,7 +77,7 @@ Failing to maintain recovery procedures, backups or infrastructure code for a sy
 
 ## 8. Review Cadence
 
-Engineering and the Security Owner review this policy on a {{review_cadence}} basis and after every declared disaster, any test in which a Tier 1 objective was missed, significant changes to the architecture of {{product}} or to {{company}}'s {{cloud}} footprint, and changes to customer commitments. Each review is approved by {{approver}} and recorded in Section 9.
+Engineering and the Security Owner review this policy on a {{review_cadence_lc}} basis and after every declared disaster, any test in which a Tier 1 objective was missed, significant changes to the architecture of {{product}} or to {{company}}'s footprint on {{cloud}}, and changes to customer commitments. Each review is approved by {{approver}} and recorded in Section 9.
 
 ## 9. Revision History
 

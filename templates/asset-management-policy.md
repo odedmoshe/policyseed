@@ -6,11 +6,9 @@ short: Requires an accurate inventory of devices, cloud resources, software and 
 owner_role: IT/Operations Lead
 order: 5
 tsc:
-- CC6.1
+- CC2.1
 - CC6.5
-- CC6.8
-- CC7.1
-- A1.1
+- C1.2
 ---
 
 ## 1. Purpose
@@ -68,7 +66,7 @@ The cloud platforms in scope for the inventory are:
 
 ## 6. Exceptions
 
-Exceptions, such as a temporary personally owned device while a company device is in transit, or a research environment that cannot be tagged conventionally, are approved in writing by the Security Owner, recorded in the exception register with compensating controls and an expiry date no later than twelve months out, and reviewed at each {{review_cadence}} review. No exception permits access to customer data from a device not recorded in the register.
+Exceptions, such as a temporary personally owned device while a company device is in transit, or a research environment that cannot be tagged conventionally, are approved in writing by the Security Owner, recorded in the exception register with compensating controls and an expiry date no later than twelve months out, and reviewed at each {{review_cadence_lc}} review. No exception permits access to customer data from a device not recorded in the register.
 
 ## 7. Enforcement
 
@@ -76,7 +74,7 @@ Assets discovered outside the register are brought under management or removed, 
 
 ## 8. Review Cadence
 
-The IT/Operations Lead and the Security Owner review this policy at the {{review_cadence}} policy review, after any incident involving a lost, stolen or unknown asset, and whenever {{company}} adopts a new cloud platform, device type or management tool. Revisions are approved by {{approver}} and recorded in section 9.
+The IT/Operations Lead and the Security Owner review this policy at the {{review_cadence_lc}} policy review, after any incident involving a lost, stolen or unknown asset, and whenever {{company}} adopts a new cloud platform, device type or management tool. Revisions are approved by {{approver}} and recorded in section 9.
 
 ## 9. Revision History
 

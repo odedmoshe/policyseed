@@ -7,8 +7,7 @@ owner_role: Security Owner
 order: 7
 tsc:
 - CC6.5
-- CC6.1
-- CC6.7
+- C1.1
 - C1.2
 ---
 
@@ -54,7 +53,7 @@ This policy applies to all data regardless of format or location: production dat
 - **5.7** Legal hold. Executive Management notifies the Security Owner in writing of the matter, custodians and data categories. Within two business days the Security Owner suspends the relevant automated deletions, instructs custodians in writing, records the hold in the register and reviews it quarterly until Executive Management releases it in writing.
 - **5.8** Quarterly retention audit. The Security Owner samples each category, confirms the oldest records do not exceed their retention period, checks the disposal log for completeness and records the results. Findings become issues with a 30-day remediation deadline and are reported to Executive Management.
 - **5.9** Paper and removable media. Paper holding Confidential or Restricted data is kept in locked cabinets and destroyed by cross-cut shredder or locked shredding bin. Removable media is prohibited for company data except with Security Owner approval; approved media is encrypted and destroyed after use, and the destruction is logged.
-- **5.10** Schedule review. At each {{review_cadence}} policy review the Security Owner checks the schedule against new customer commitments, changes in law and new data categories in {{product}}, and updates the schedule and automation.
+- **5.10** Schedule review. At each {{review_cadence_lc}} policy review the Security Owner checks the schedule against new customer commitments, changes in law and new data categories in {{product}}, and updates the schedule and automation.
 
 ## 6. Exceptions
 
@@ -66,7 +65,7 @@ Violations of this policy are handled under the Human Resources Security Policy 
 
 ## 8. Review Cadence
 
-The Security Owner reviews this policy on the {{review_cadence}} review cycle and after any significant change to {{company}}'s systems, vendors, customer commitments or applicable law, and after any incident involving improper retention or disposal. Changes are approved by {{approver}} and recorded in the revision history.
+The Security Owner reviews this policy on the {{review_cadence_lc}} review cycle and after any significant change to {{company}}'s systems, vendors, customer commitments or applicable law, and after any incident involving improper retention or disposal. Changes are approved by {{approver}} and recorded in the revision history.
 
 ## 9. Revision History
 
