@@ -95,10 +95,33 @@ Statements, Procedures, Exceptions, Enforcement, Review Cadence, and Revision Hi
 
 ## Keeping policies current in CI
 
-Copy [`.github/workflows/policy-review.yml`](./.github/workflows/policy-review.yml) into a repo
-that keeps `intake.yaml` and `policies/` under version control. It runs `policyseed check`
-weekly and on every push that touches those paths, and fails the check when a policy is overdue
-for review — so a stale policy shows up as a red X instead of quietly rotting.
+Use the GitHub Action in a repo that keeps `intake.yaml` and `policies/` under version control:
+
+```yaml
+- uses: actions/checkout@v4
+- uses: odedmoshe/policyseed@v1
+  with:
+    command: check
+```
+
+It fails the check when a policy is overdue for review, so a stale policy shows up as a red X
+instead of quietly rotting. [`.github/workflows/policy-review.yml`](./.github/workflows/policy-review.yml)
+is a complete weekly workflow to copy; inputs and outputs are in
+[docs/github-action.md](./docs/github-action.md).
+
+## Use it from an AI assistant (MCP)
+
+`policyseed mcp` starts a [Model Context Protocol](https://modelcontextprotocol.io) server, so
+Claude, Cursor and other MCP clients can list the policies, ask you the intake questions and
+render any policy in the conversation. Nothing leaves your machine except what you type to the
+assistant.
+
+```sh
+claude mcp add policyseed -- npx -y github:odedmoshe/policyseed mcp
+```
+
+Claude Desktop and Cursor configuration, the tool list and an example conversation are in
+[docs/mcp.md](./docs/mcp.md).
 
 ## Relationship to the hosted generator and Audit Kit
 

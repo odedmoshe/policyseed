@@ -1,6 +1,6 @@
 {
   "name": "policyseed",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Free, offline SOC 2 policy generator. Renders 22 governance policy templates from a YAML intake file. Apache-2.0, no LLM, no signup.",
   "type": "module",
   "bin": {
@@ -9,6 +9,7 @@
   "files": [
     "bin",
     "lib",
+    "docs",
     "templates",
     "README.md",
     "LICENSE"
@@ -30,7 +31,11 @@
     "policies",
     "compliance",
     "templates",
-    "policy-as-code"
+    "policy-as-code",
+    "mcp",
+    "mcp-server",
+    "github-action",
+    "iso27001"
   ],
   "scripts": {
     "test": "node --test"

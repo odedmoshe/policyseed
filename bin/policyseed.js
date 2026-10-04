@@ -4,33 +4,21 @@
  * Deterministic Markdown from a YAML intake file and the bundled templates. No network calls,
  * no LLM, no signup. See ../README.md for full docs.
  */
-import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
-import { join, dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
 
-import { renderTemplate, parseFrontMatter } from "../lib/render.js";
-import {
-  DEFAULT_INTAKE, toTemplateContext, validateIntake,
-  HEADCOUNTS, WORK_MODELS, CLOUDS, SCMS, IDPS, DATA_TYPES, APP_TYPES, TSC_SCOPES, REVIEW_CADENCES,
-} from "../lib/context.js";
+import { DEFAULT_INTAKE, toTemplateContext, validateIntake, INTAKE_FIELDS } from "../lib/context.js";
 import { parseYaml, yamlKeyLine } from "../lib/yaml.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const PKG_ROOT = resolve(__dirname, "..");
-const TEMPLATES_DIR = join(PKG_ROOT, "templates");
+import {
+  TEMPLATES_DIR, readVersion, loadTemplates as loadTemplatesFrom, policyFileStem, renderPolicy,
+  CADENCE_DAYS, evaluateReviews, readPolicyFiles,
+} from "../lib/policies.js";
+import { startMcpServer } from "../lib/mcp.js";
 
 class CliError extends Error {}
 
 function fail(message) {
   throw new CliError(message);
-}
-
-function readVersion() {
-  try {
-    return JSON.parse(readFileSync(join(PKG_ROOT, "package.json"), "utf8")).version;
-  } catch {
-    return "0.0.0";
-  }
 }
 
 function flagValue(args, name, fallback) {
@@ -43,27 +31,7 @@ function flagValue(args, name, fallback) {
 
 function loadTemplates() {
   if (!existsSync(TEMPLATES_DIR)) fail(`Templates directory not found: ${TEMPLATES_DIR}`);
-  const files = readdirSync(TEMPLATES_DIR).filter((f) => f.endsWith(".md")).sort();
-  const templates = files.map((f) => {
-    const raw = readFileSync(join(TEMPLATES_DIR, f), "utf8");
-    const { meta, body } = parseFrontMatter(raw);
-    return {
-      id: String(meta.id ?? "").trim(),
-      slug: String(meta.slug ?? "").trim(),
-      title: String(meta.title ?? "").trim(),
-      owner_role: String(meta.owner_role ?? "").trim(),
-      order: Number(meta.order ?? 0) || 0,
-      tsc: Array.isArray(meta.tsc) ? meta.tsc : [],
-      body,
-      file: f,
-    };
-  });
-  templates.sort((a, b) => a.order - b.order || a.slug.localeCompare(b.slug));
-  return templates;
-}
-
-function policyFileStem(t) {
-  return `${String(t.order).padStart(2, "0")}-${t.slug}`;
+  return loadTemplatesFrom(TEMPLATES_DIR);
 }
 
 function printTable(rows, columns) {
@@ -103,29 +71,7 @@ function cmdInit(args) {
     "# Fields marked (required) must be non-empty. Enum fields must match one of the listed",
     '# values exactly (case-sensitive). Lists use "- item" lines or inline "[a, b]".',
     "",
-    initField("company", d.company, "Legal or trading name used on every policy document. (required)"),
-    initField("product", d.product, "Name of the product or service the policies describe. (required)"),
-    initField("headcount", d.headcount, `Company headcount bracket. One of: ${HEADCOUNTS.join(", ")}`),
-    initField("work_model", d.work_model, `How the team works. One of: ${WORK_MODELS.join(", ")}`),
-    initField("cloud", d.cloud, `One or more cloud/hosting providers. Any of: ${CLOUDS.join(", ")}`),
-    initField("scm", d.scm, `Source control host. One of: ${SCMS.join(", ")}`),
-    initField("cicd", d.cicd, "CI/CD system name (free text, optional)."),
-    initField("idp", d.idp, `Identity provider / SSO. One of: ${IDPS.join(", ")}`),
-    initField("mfa", d.mfa, "Whether multi-factor authentication is enforced. true or false."),
-    initField("mdm", d.mdm, "Mobile device management tool, or empty if none (free text, optional)."),
-    initField("password_manager", d.password_manager, "Password manager in use, or empty if none (free text, optional)."),
-    initField("data_types", d.data_types, `Sensitive data types handled. Any of: ${DATA_TYPES.join(", ")} (or empty list).`),
-    initField("app_type", d.app_type, `Type of product. One of: ${APP_TYPES.join(", ")}`),
-    initField("vendors", d.vendors, "Named vendors to call out in policy text (free text list, optional, up to 10)."),
-    initField("security_owner", d.security_owner, 'Person accountable for security, as "Name, Title". (required)'),
-    initField("approver", d.approver, 'Person who approves policies, as "Name, Title". (required)'),
-    initField("incident_contact", d.incident_contact, "Email or channel for reporting incidents. (required)"),
-    initField("backup_tool", d.backup_tool, "Backup tool or service (free text, optional)."),
-    initField("backup_cadence", d.backup_cadence, "How often backups run (free text, optional, e.g. Daily)."),
-    initField("logging_tool", d.logging_tool, "Centralized logging/monitoring tool (free text, optional)."),
-    initField("tsc_scope", d.tsc_scope, `Trust Services Criteria in scope. One or more of: ${TSC_SCOPES.join(", ")}`),
-    initField("review_cadence", d.review_cadence, `How often policies are reviewed. One of: ${REVIEW_CADENCES.join(", ")} (used by "policyseed check").`),
-    initField("effective_date", d.effective_date, "Effective date of this policy version, as YYYY-MM-DD."),
+    ...INTAKE_FIELDS.map((f) => initField(f.key, d[f.key], f.comment)),
   ];
 
   writeFileSync(outPath, parts.join("\n").replace(/\n{3,}/g, "\n\n").trimEnd() + "\n", "utf8");
@@ -168,10 +114,7 @@ function cmdBuild(args) {
 
   const rows = [];
   for (const t of templates) {
-    const body = renderTemplate(t.body, ctx);
-    const h1Text = [ctx.company.trim(), t.title.trim()].filter(Boolean).join(" ");
-    const markdown = `# ${h1Text}\n\n${body}`.replace(/\n{3,}/g, "\n\n\n");
-    const finalMarkdown = markdown.endsWith("\n") ? markdown : `${markdown}\n`;
+    const finalMarkdown = renderPolicy(t, ctx);
     const stem = policyFileStem(t);
     writeFileSync(join(outDir, `${stem}.md`), finalMarkdown, "utf8");
     rows.push({ id: t.id, file: `${stem}.md`, title: t.title });
@@ -189,22 +132,6 @@ function cmdBuild(args) {
  * check
  * ------------------------------------------------------------------------------------------- */
 
-const CADENCE_DAYS = { Annual: 365, "Semi-annual": 182, Quarterly: 91 };
-
-function lastRevisionDate(markdown) {
-  const dateRe = /^\|\s*[^|]+\|\s*(\d{4}-\d{2}-\d{2})\s*\|/gm;
-  let m;
-  let last = null;
-  while ((m = dateRe.exec(markdown)) !== null) last = m[1];
-  return last;
-}
-
-function daysSince(dateStr, now) {
-  const d = new Date(`${dateStr}T00:00:00Z`);
-  if (Number.isNaN(d.getTime())) return null;
-  return Math.floor((now.getTime() - d.getTime()) / 86400000);
-}
-
 function cmdCheck(args) {
   const intakePath = flagValue(args, "--intake", "intake.yaml");
   const policiesDir = flagValue(args, "--dir", "policies");
@@ -218,26 +145,10 @@ function cmdCheck(args) {
   }
 
   if (!existsSync(policiesDir)) fail(`Policies directory not found: ${policiesDir}\nRun "policyseed build" first.`);
-  const files = readdirSync(policiesDir).filter((f) => f.endsWith(".md")).sort();
-  if (files.length === 0) fail(`No policy files found in ${policiesDir}`);
+  const policies = readPolicyFiles(policiesDir);
+  if (policies.length === 0) fail(`No policy files found in ${policiesDir}`);
 
-  const now = new Date();
-  const ok = [];
-  const overdue = [];
-  const unknown = [];
-
-  for (const f of files) {
-    const content = readFileSync(join(policiesDir, f), "utf8");
-    const lastDate = lastRevisionDate(content) ?? (typeof intake.effective_date === "string" ? intake.effective_date : null);
-    const days = lastDate ? daysSince(lastDate, now) : null;
-    if (days === null) {
-      unknown.push({ file: f });
-      continue;
-    }
-    const record = { file: f, lastDate, days };
-    if (days >= cadence) overdue.push(record);
-    else ok.push(record);
-  }
+  const { ok, overdue, unknown } = evaluateReviews(intake, policies);
 
   console.log(`Review cadence: ${intake.review_cadence} (${cadence} days)\n`);
 
@@ -283,6 +194,10 @@ function cmdList() {
   );
 }
 
+function cmdMcp() {
+  startMcpServer();
+}
+
 const HELP = `policyseed — free, offline SOC 2 policy generator (Apache-2.0, no LLM, no signup)
 
 Usage:
@@ -302,6 +217,11 @@ Usage:
 
   policyseed list
       Print the 22 bundled policy templates.
+
+  policyseed mcp
+      Start a Model Context Protocol (MCP) server on stdio so AI assistants (Claude Desktop,
+      Claude Code, Cursor, ...) can list, interview for and render the policies.
+      See docs/mcp.md for client setup.
 
   policyseed --help
   policyseed --version
@@ -333,6 +253,8 @@ function main() {
       return cmdCheck(rest);
     case "list":
       return cmdList();
+    case "mcp":
+      return cmdMcp();
     default:
       fail(`Unknown command: ${command}\n\n${HELP}`);
   }
