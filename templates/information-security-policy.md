@@ -68,6 +68,8 @@ The Trust Services Criteria selected for the SOC 2 examination are {{tsc_scope}}
 - **4.11** Third parties that store or process company or customer data are assessed before onboarding and reviewed periodically under the Vendor and Third-Party Risk Management Policy.
 - **4.12** {{company}} states its security commitments externally through its terms of service, privacy notice, security page and customer contracts, and internally through this policy set, onboarding and training. Changes to external commitments are approved by Executive Management before publication.
 - **4.13** Deviations from any policy require a documented exception under section 6; undocumented deviations are policy violations. Compliance is verified through internal control reviews, the evidence collection in section 5, and the independent SOC 2 examination performed by a licensed CPA firm.
+- **4.14** The Security Owner follows security advisories from the vendors {{company}} relies on, including {{cloud}}, and stays in contact with relevant security communities, mailing lists and professional groups. Relevant threats and good practice learned this way are fed into vulnerability management and the risk assessment.
+- **4.15** {{company}} identifies the legal, statutory, regulatory and contractual requirements that affect information security, including customer contracts, data processing agreements and the laws applicable to its operations and data as identified with legal counsel, and records each in a register of obligations with an owner.
 
 ## 5. Procedures
 
@@ -79,6 +81,7 @@ The Trust Services Criteria selected for the SOC 2 examination are {{tsc_scope}}
 - **5.6** Exceptions. Requests are submitted in writing to the Security Owner stating the statement affected, the justification, compensating controls, the risk owner and an expiry date no more than twelve months out. Approved exceptions are logged in the exception register and reviewed at each {{review_cadence_lc}} review.
 - **5.7** Incident escalation. Anyone who suspects an incident reports it to {{incident_contact}}. The Security Owner triages within one business day under the Incident Response Policy and informs Executive Management of any incident affecting customer data or the availability of {{product}}.
 - **5.8** Independent examination. The Security Owner coordinates scoping, evidence requests, walkthroughs and remediation with the CPA firm. Findings are tracked to closure in the risk register with an owner and due date.
+- **5.9** Register of obligations. The Security Owner maintains the register in 4.15, recording each requirement, its source, its owner and the policies or controls that meet it. It is updated when a contract with non-standard security terms is signed or counsel identifies a new obligation, and reviewed in full with legal counsel at least annually.
 
 ## 6. Exceptions
 
