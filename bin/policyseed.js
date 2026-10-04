@@ -307,7 +307,7 @@ Usage:
   policyseed --version
 
 Docs: https://github.com/odedmoshe/policyseed
-Hosted generator: https://policyseed.vercel.app
+Hosted generator: https://policyseed.io
 `;
 
 function main() {

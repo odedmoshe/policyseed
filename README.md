@@ -103,7 +103,7 @@ for review — so a stale policy shows up as a red X instead of quietly rotting.
 ## Relationship to the hosted generator and Audit Kit
 
 This package is the same rendering engine that powers the hosted generator at
-[policyseed.vercel.app](https://policyseed.vercel.app), packaged for people who'd rather run it
+[policyseed.io](https://policyseed.io), packaged for people who'd rather run it
 locally, script it into CI, or read exactly how it works; the hosted site also offers a paid
 Audit Kit that uses Claude to tailor the Policy Statements and Procedures sections to your
 specific stack and adds export formats — this CLI does not include that tailoring step.
