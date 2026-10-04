@@ -1,0 +1,93 @@
+name: "Policyseed SOC 2 policy review"
+description: "Fail CI when SOC 2 policies rendered by policyseed are overdue for review, or render them from intake.yaml."
+author: "odedmoshe"
+
+branding:
+  icon: "shield"
+  color: "green"
+
+inputs:
+  command:
+    description: 'policyseed command to run: "check" (fail if any policy is overdue for review) or "build" (render policies from the intake file).'
+    required: false
+    default: "check"
+  intake:
+    description: "Path to the intake YAML file, relative to working-directory (passed as --intake)."
+    required: false
+    default: "intake.yaml"
+  policies-dir:
+    description: 'Directory of rendered policies, relative to working-directory. Passed as --dir for "check" and --out for "build".'
+    required: false
+    default: "policies"
+  node-version:
+    description: "Node.js version to install with actions/setup-node (18 or later). Set to an empty string to use the Node.js already on the runner."
+    required: false
+    default: "22"
+  working-directory:
+    description: "Directory to run policyseed in."
+    required: false
+    default: "."
+
+outputs:
+  exit-code:
+    description: "Exit code of the policyseed CLI (0 on success)."
+    value: ${{ steps.run.outputs.exit-code }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Node.js
+      if: inputs.node-version != ''
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Run policyseed
+      id: run
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        POLICYSEED_BIN: ${{ github.action_path }}/bin/policyseed.js
+        POLICYSEED_COMMAND: ${{ inputs.command }}
+        POLICYSEED_INTAKE: ${{ inputs.intake }}
+        POLICYSEED_POLICIES_DIR: ${{ inputs.policies-dir }}
+      run: |
+        # GitHub runs bash steps with -e; turn it off so a failing check still reaches the
+        # job summary below. The real exit code is re-raised at the end.
+        set +e -uo pipefail
+
+        case "$POLICYSEED_COMMAND" in
+          check) dir_flag="--dir" ;;
+          build) dir_flag="--out" ;;
+          *)
+            echo "::error title=policyseed::Unsupported command '$POLICYSEED_COMMAND'. Expected 'check' or 'build'."
+            exit 1
+            ;;
+        esac
+
+        args=("$POLICYSEED_COMMAND" --intake "$POLICYSEED_INTAKE" "$dir_flag" "$POLICYSEED_POLICIES_DIR")
+
+        log="$(mktemp)"
+        node "$POLICYSEED_BIN" "${args[@]}" 2>&1 | tee "$log"
+        status="${PIPESTATUS[0]}"
+
+        echo "exit-code=$status" >> "$GITHUB_OUTPUT"
+
+        if [ "$status" -eq 0 ]; then
+          verdict="passed"
+        else
+          verdict="failed (exit code $status)"
+        fi
+        {
+          echo "### policyseed $POLICYSEED_COMMAND $verdict"
+          echo
+          echo '````text'
+          cat "$log"
+          echo '````'
+        } >> "$GITHUB_STEP_SUMMARY"
+        rm -f "$log"
+
+        if [ "$status" -ne 0 ]; then
+          echo "::error title=policyseed::policyseed $POLICYSEED_COMMAND failed with exit code $status. See the job summary for details."
+        fi
+        exit "$status"

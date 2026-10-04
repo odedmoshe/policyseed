@@ -1,0 +1,103 @@
+# Self-test for the composite action in action.yml. Builds a throwaway policy set with the
+# CLI, then runs the local action (`uses: ./`) against it: once with fresh policies (must
+# pass) and once with backdated policies (must fail).
+name: Action self-test
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  action-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Prepare fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          fill_intake() {
+            sed -i \
+              -e 's/^company:.*/company: Acme, Inc./' \
+              -e 's/^product:.*/product: Widget Suite/' \
+              -e 's/^security_owner:.*/security_owner: Jane Doe, CTO/' \
+              -e 's/^approver:.*/approver: Jane Doe, CTO/' \
+              -e 's/^incident_contact:.*/incident_contact: security@acme.example/' \
+              "$1"
+          }
+
+          # Fresh: effective_date is today, so every policy is within its review cadence.
+          mkdir -p "$RUNNER_TEMP/fresh"
+          (cd "$RUNNER_TEMP/fresh" && node "$GITHUB_WORKSPACE/bin/policyseed.js" init)
+          fill_intake "$RUNNER_TEMP/fresh/intake.yaml"
+          (cd "$RUNNER_TEMP/fresh" && node "$GITHUB_WORKSPACE/bin/policyseed.js" build)
+
+          # Stale: effective_date far in the past, so `check` must report overdue policies.
+          # Policies are rendered by the action's own `build` command below.
+          mkdir -p "$RUNNER_TEMP/stale"
+          (cd "$RUNNER_TEMP/stale" && node "$GITHUB_WORKSPACE/bin/policyseed.js" init)
+          fill_intake "$RUNNER_TEMP/stale/intake.yaml"
+          sed -i 's/^effective_date:.*/effective_date: 2000-01-01/' "$RUNNER_TEMP/stale/intake.yaml"
+
+      - name: "Positive: check passes on fresh policies"
+        id: fresh
+        uses: ./
+        with:
+          command: check
+          working-directory: ${{ runner.temp }}/fresh
+
+      - name: "Build via the action (custom policies-dir)"
+        id: build
+        uses: ./
+        with:
+          command: build
+          intake: intake.yaml
+          policies-dir: rendered
+          working-directory: ${{ runner.temp }}/stale
+
+      - name: "Negative: check fails on overdue policies"
+        id: stale
+        continue-on-error: true
+        uses: ./
+        with:
+          command: check
+          policies-dir: rendered
+          working-directory: ${{ runner.temp }}/stale
+
+      - name: "Negative: unsupported command is rejected"
+        id: badcmd
+        continue-on-error: true
+        uses: ./
+        with:
+          command: list
+          working-directory: ${{ runner.temp }}/fresh
+
+      - name: Assert outcomes
+        shell: bash
+        env:
+          FRESH_OUTCOME: ${{ steps.fresh.outcome }}
+          FRESH_EXIT: ${{ steps.fresh.outputs.exit-code }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          STALE_OUTCOME: ${{ steps.stale.outcome }}
+          STALE_EXIT: ${{ steps.stale.outputs.exit-code }}
+          BADCMD_OUTCOME: ${{ steps.badcmd.outcome }}
+        run: |
+          set -euo pipefail
+          echo "fresh=$FRESH_OUTCOME (exit $FRESH_EXIT) build=$BUILD_OUTCOME stale=$STALE_OUTCOME (exit $STALE_EXIT) badcmd=$BADCMD_OUTCOME"
+          test "$FRESH_OUTCOME" = "success"
+          test "$FRESH_EXIT" = "0"
+          test "$BUILD_OUTCOME" = "success"
+          test "$(find "$RUNNER_TEMP/stale/rendered" -name '*.md' | wc -l)" -eq 22
+          test "$STALE_OUTCOME" = "failure"
+          test "$STALE_EXIT" = "1"
+          test "$BADCMD_OUTCOME" = "failure"
+          echo "All action self-test assertions passed."

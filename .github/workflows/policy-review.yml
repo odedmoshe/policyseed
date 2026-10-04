@@ -3,8 +3,8 @@
 # if your intake.yaml or policies/ directory live somewhere else.
 #
 # It fails the workflow when any policy's last review date has exceeded its
-# review_cadence (see `policyseed check --help`), so an overdue policy shows up as a
-# red check on your default branch and in your weekly run history.
+# review_cadence (see `policyseed --help` and docs/github-action.md), so an overdue
+# policy shows up as a red check on your default branch and in your weekly run history.
 name: Policy review check
 
 on:
@@ -27,9 +27,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
+      # Runs `policyseed check` from the action's own checkout (no npm install, no network
+      # fetch of the package) and writes the result to the job summary. Pin to @v1 for
+      # compatible updates, or to a full commit SHA for a fully reproducible run.
       - name: Run policyseed check
-        run: npx --yes github:odedmoshe/policyseed check
+        uses: odedmoshe/policyseed@v1
+        with:
+          command: check
+          intake: intake.yaml
+          policies-dir: policies
