@@ -61,7 +61,7 @@ behind. Three or more consecutive blank lines collapse to two.
 The context available to every template is built by `toTemplateContext()` in
 [`lib/context.js`](./lib/context.js) from your `intake.yaml` — company name, cloud providers,
 identity provider, MFA status, data types handled, and so on, plus derived booleans like
-`has_mdm`, `has_vendors` and `scope_availability` that templates branch on.
+`has_mdm`, `has_vendors`, `scope_availability` and `small_team` (headcount 1-10) that templates branch on.
 
 ## The 22 policies
 
