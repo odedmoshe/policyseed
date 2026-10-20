@@ -29,7 +29,7 @@ This policy applies to all data regardless of format or location: production dat
 
 ## 4. Policy Statements
 
-- **4.1** {{company}} maintains a written retention schedule (Section 5.1) listing each data category, its system of record, retention period and disposal method. Data is kept no longer than its business purpose, contractual commitment or legal obligation requires, whichever is longest, and is disposed of promptly afterwards.
+- **4.1** {{company}} maintains a written retention schedule (Section 5.1) listing each data category, its system of record, retention period and disposal method. Data is kept no longer than its business purpose, contractual commitment or legal obligation requires, whichever is longest, and is disposed of promptly afterward.
 - **4.2** Personnel collect and keep only data needed for a defined purpose. New data collection in {{product}} must have an owner, a classification under the Data Classification and Handling Policy and a retention period before release.
 - **4.3** Customer data in {{product}} is retained for the term of the customer agreement and deleted within 30 days after termination or after a verified written deletion request, unless a legal hold applies. {{company}} confirms deletion in writing on request.
 - **4.4** Backups follow the {{backup_cadence}} schedule in the Backup and Recovery Policy and expire automatically no later than 35 days after creation{{#if has_backup_tool}} through {{backup_tool}} lifecycle settings{{/if}}. Deleted production data is fully purged once the last backup containing it expires; personnel do not restore backups to circumvent a deletion.

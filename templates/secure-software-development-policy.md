@@ -28,7 +28,7 @@ This policy applies to all software developed by or for {{company}}, including {
 
 ## 4. Policy Statements
 
-- **4.1** {{company}} follows a defined secure development lifecycle: security requirements during planning, threat modeling during design, secure coding standards and peer review during implementation, automated and manual security testing before release, and monitoring and vulnerability management afterwards.
+- **4.1** {{company}} follows a defined secure development lifecycle: security requirements during planning, threat modeling during design, secure coding standards and peer review during implementation, automated and manual security testing before release, and monitoring and vulnerability management afterward.
 - **4.2** Features that add or change authentication, authorization, session handling, payment flows, file upload, third-party integrations, cryptography, or the processing of{{#if has_sensitive_data}} {{data_types}} or other{{/if}} sensitive data require written security requirements and a threat model approved by the Security Owner before implementation begins.
 - **4.3** Engineers follow {{company}}'s secure coding standards, which adopt OWASP ASVS Level 2 as the baseline and address the OWASP Top 10: parameterized queries, output encoding, server-side allow-list input validation, centralized authentication and authorization checks, secure session management, safe file handling, protection against server-side request forgery, and vetted cryptographic libraries only.
 - **4.4** All code is peer reviewed through a pull request in {{scm}} under the Change Management Policy, and reviewers apply a security checklist covering authorization, input handling, secrets, logging of sensitive data, error handling and dependency changes.

@@ -19,7 +19,7 @@ tsc:
 
 ## 2. Scope
 
-This policy applies to every network, subnet, load balancer, firewall rule, DNS zone, compute instance, container platform, managed database, storage bucket, queue and edge service that hosts or supports {{product}}, in production, staging and development. {{company}} currently hosts on {{cloud}}. It also covers any office network or corporate VPN that {{company}} operates, and the infrastructure-as-code held in {{scm}} and deployed through {{cicd}}. Endpoints and provider data centres are covered by the Endpoint and Workstation Security Policy and the Physical and Remote Work Security Policy respectively.
+This policy applies to every network, subnet, load balancer, firewall rule, DNS zone, compute instance, container platform, managed database, storage bucket, queue and edge service that hosts or supports {{product}}, in production, staging and development. {{company}} currently hosts on {{cloud}}. It also covers any office network or corporate VPN that {{company}} operates, and the infrastructure-as-code held in {{scm}} and deployed through {{cicd}}. Endpoints and provider data centers are covered by the Endpoint and Workstation Security Policy and the Physical and Remote Work Security Policy respectively.
 
 ## 3. Roles and Responsibilities
 
@@ -27,11 +27,11 @@ This policy applies to every network, subnet, load balancer, firewall rule, DNS 
 - **Security Owner ({{security_owner}})** approves the network architecture and hardening baselines, reviews the firewall and access reviews, owns external testing and handles escalated anomalies.
 - **Engineering** owns this policy through the Engineering Lead, operates the infrastructure, writes and reviews infrastructure-as-code, applies hardening baselines, responds to alerts and performs the reviews in Section 5.
 - **People Operations** ensures that infrastructure administrators are onboarded and offboarded under the Human Resources Security Policy and that administrator role changes reach Engineering the same day.
-- **All Personnel** with infrastructure access use only the approved paths in this policy and report suspected misconfigurations or unauthorised access to {{incident_contact}}.
+- **All Personnel** with infrastructure access use only the approved paths in this policy and report suspected misconfigurations or unauthorized access to {{incident_contact}}.
 
 ## 4. Policy Statements
 
-- **4.1** Production, staging and development environments are isolated in separate accounts, projects or subscriptions with no shared network paths, credentials or data. Production data is not copied into non-production environments except as anonymised or synthetic datasets approved by the Security Owner.
+- **4.1** Production, staging and development environments are isolated in separate accounts, projects or subscriptions with no shared network paths, credentials or data. Production data is not copied into non-production environments except as anonymized or synthetic datasets approved by the Security Owner.
 - **4.2** Every environment follows a segmented network design, applied on each hosting platform {{company}} uses as follows:
 {{#each cloud_list}}  - {{this}}: workloads sit in private subnets or equivalent private segments with no direct inbound route from the internet; databases and caches accept connections only from application segments; security groups and firewall rules default to deny and allow only documented ports and sources; and a web application firewall or equivalent edge protection fronts every public HTTP endpoint.
 {{/each}}
@@ -44,7 +44,7 @@ This policy applies to every network, subnet, load balancer, firewall rule, DNS 
 - **4.9** Secrets (API keys, database passwords, signing keys, tokens) live in the platform's secret manager and are injected at runtime. They are never committed to {{scm}}, baked into images or written to logs, and are rotated on a defined schedule and immediately after any suspected exposure.
 - **4.10** Network flow logs, load balancer logs, DNS query logs and cloud audit logs are enabled in every environment and retained{{#if has_logging_tool}} in {{logging_tool}}{{/if}} under the Logging and Monitoring Policy. Alerts fire on security group changes, new public exposures, root or owner account use and unusual outbound traffic.
 - **4.11** Public-facing services are protected against denial-of-service and abusive traffic by the provider's DDoS protection and edge rate limiting{{#if is_api}}, with per-client rate limits on the {{product}} API{{/if}}. {{#if scope_availability}}Production workloads span at least two availability zones or equivalent failure domains.{{/if}}{{#unless scope_availability}}Capacity and redundancy decisions are recorded in the architecture record.{{/unless}}
-- **4.12** {{#if remote_or_hybrid}}{{company}} operates as a {{work_model}} organisation and treats no office or home network as trusted. Access depends on the identity and device of the person connecting, not on the network, and any corporate VPN is limited to specific administrative destinations.{{/if}}{{#unless remote_or_hybrid}}Office networks are segmented so that guest Wi-Fi, corporate devices, printers and on-premises equipment sit on separate VLANs, and the office network is treated as untrusted for reaching production systems.{{/unless}}
+- **4.12** {{#if remote_or_hybrid}}{{company}} operates as a {{work_model}} organization and treats no office or home network as trusted. Access depends on the identity and device of the person connecting, not on the network, and any corporate VPN is limited to specific administrative destinations.{{/if}}{{#unless remote_or_hybrid}}Office networks are segmented so that guest Wi-Fi, corporate devices, printers and on-premises equipment sit on separate VLANs, and the office network is treated as untrusted for reaching production systems.{{/unless}}
 - **4.13** The external attack surface of {{product}} is scanned for open ports, exposed services and known vulnerabilities at least monthly, and an independent penetration test of production is performed at least annually and after major architectural changes. Findings are remediated under the Vulnerability and Patch Management Policy.
 
 ## 5. Procedures

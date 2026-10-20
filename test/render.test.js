@@ -176,6 +176,14 @@ describe("context: toTemplateContext / joinList", () => {
     assert.equal(ctx.has_vendors, true);
     assert.equal(ctx.vendors, "Stripe");
     assert.equal(ctx.cicd, "GitHub Actions");
+    assert.equal(ctx.small_team, DEFAULT_INTAKE.headcount === "1-10");
+  });
+
+  test("small_team is true only for the 1-10 headcount band", () => {
+    assert.equal(toTemplateContext({ ...DEFAULT_INTAKE, headcount: "1-10" }).small_team, true);
+    for (const headcount of ["11-50", "51-200", "201+"]) {
+      assert.equal(toTemplateContext({ ...DEFAULT_INTAKE, headcount }).small_team, false, headcount);
+    }
   });
 
   test("empty cicd falls back to a generic phrase", () => {
