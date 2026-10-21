@@ -1,6 +1,6 @@
 {
   "name": "policyseed",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Free, offline SOC 2 policy generator. Renders 22 governance policy templates from a YAML intake file. Apache-2.0, no LLM, no signup.",
   "type": "module",
   "bin": {

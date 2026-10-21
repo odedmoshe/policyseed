@@ -1,0 +1,98 @@
+# Cuts a release from master: runs the tests, creates the vX.Y.Z tag and moves the major tag
+# (v1) that `uses: odedmoshe/policyseed@v1` resolves, publishes the GitHub release with the notes
+# in docs/releases/vX.Y.Z.md, and publishes to npm when the NPM_TOKEN repository secret is set.
+# Every step is idempotent: re-run it after adding NPM_TOKEN and only the npm publish happens.
+#
+# Listing the Action on the GitHub Marketplace is a one-time manual step in the web UI (edit the
+# release, tick "Publish this Action to the GitHub Marketplace"), because it needs the owner to
+# accept the Marketplace agreement.
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release, without the v (must equal package.json), e.g. 1.0.0"
+        required: true
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Validate version
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::version must look like 1.2.3"; exit 1; }
+          pkg=$(node -p "require('./package.json').version")
+          [ "$VERSION" = "$pkg" ] || { echo "::error::input $VERSION does not match package.json $pkg"; exit 1; }
+          [ -f "docs/releases/v$VERSION.md" ] || { echo "::error::missing docs/releases/v$VERSION.md"; exit 1; }
+          [ "$GITHUB_REF_NAME" = "master" ] || { echo "::error::run this from master"; exit 1; }
+
+      - name: Test
+        run: npm test
+
+      - name: Tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          tag="v$VERSION"
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+            echo "$tag already exists at $(git rev-list -n1 "$tag")"
+          else
+            git tag -a "$tag" -m "$tag"
+            git push origin "refs/tags/$tag"
+          fi
+          major="v${VERSION%%.*}"
+          git tag -f -a "$major" -m "$major points to $tag" "$(git rev-list -n1 "$tag")"
+          git push -f origin "refs/tags/$major"
+
+      - name: GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="v$VERSION"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "release $tag already exists"
+          else
+            gh release create "$tag" --verify-tag --title "$tag" --notes-file "docs/releases/$tag.md"
+          fi
+
+      - name: Publish to npm
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+            echo "::notice::NPM_TOKEN repository secret is not set; skipped npm publish. Add it and re-run this workflow."
+            exit 0
+          fi
+          if npm view "policyseed@$VERSION" version >/dev/null 2>&1; then
+            echo "policyseed@$VERSION is already on npm"
+            exit 0
+          fi
+          npm publish --provenance --access public
