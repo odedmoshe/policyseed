@@ -64,6 +64,20 @@ jobs:
             git tag -a "$tag" -m "$tag"
             git push origin "refs/tags/$tag"
           fi
+          # Everything after this runs on the tagged commit, so a re-run after more commits land on
+          # master still releases and publishes exactly what v$VERSION points to.
+          git checkout --quiet --detach "refs/tags/$tag"
+          pkg=$(node -p "require('./package.json').version")
+          [ "$pkg" = "$VERSION" ] || { echo "::error::$tag has package.json $pkg"; exit 1; }
+
+      - name: Test the tagged commit
+        run: npm test
+
+      - name: Move the major tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="v$VERSION"
           major="v${VERSION%%.*}"
           git tag -f -a "$major" -m "$major points to $tag" "$(git rev-list -n1 "$tag")"
           git push -f origin "refs/tags/$major"
