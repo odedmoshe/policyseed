@@ -122,7 +122,7 @@ render any policy in the conversation. Nothing leaves your machine except what y
 assistant.
 
 ```sh
-claude mcp add policyseed -- npx -y github:odedmoshe/policyseed mcp
+claude mcp add policyseed -- npx -y policyseed mcp
 ```
 
 Claude Desktop and Cursor configuration, the tool list and an example conversation are in

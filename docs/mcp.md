@@ -31,7 +31,7 @@ Open the config file from Settings > Developer > Edit Config, or edit it directl
   "mcpServers": {
     "policyseed": {
       "command": "npx",
-      "args": ["-y", "github:odedmoshe/policyseed", "mcp"]
+      "args": ["-y", "policyseed", "mcp"]
     }
   }
 }
@@ -42,7 +42,7 @@ Restart Claude Desktop. The policyseed tools then appear in the tools menu.
 ### Claude Code
 
 ```sh
-claude mcp add policyseed -- npx -y github:odedmoshe/policyseed mcp
+claude mcp add policyseed -- npx -y policyseed mcp
 ```
 
 Add `--scope project` to write it to the repository's `.mcp.json`, which shares it with your
@@ -57,7 +57,7 @@ Create `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` to use it in 
   "mcpServers": {
     "policyseed": {
       "command": "npx",
-      "args": ["-y", "github:odedmoshe/policyseed", "mcp"]
+      "args": ["-y", "policyseed", "mcp"]
     }
   }
 }
@@ -66,7 +66,7 @@ Create `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` to use it in 
 ### Other clients
 
 Any client that can launch a stdio server works. The command is `npx`, and the arguments are
-`-y github:odedmoshe/policyseed mcp`.
+`-y policyseed mcp`.
 
 ## Tools
 
@@ -147,5 +147,5 @@ which sentences.
   printf '%s\n' \
     '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"sh","version":"0"}}}' \
     '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
-    | npx -y github:odedmoshe/policyseed mcp
+    | npx -y policyseed mcp
   ```
