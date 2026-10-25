@@ -11,17 +11,17 @@ from a single YAML intake file, using a small template engine and zero runtime d
   only the cloud CLIs you already use (`aws`, `gcloud`, `gh`), with read-only commands, and only
   when you run it.
 
-It will not, by itself, make you SOC 2 compliant. See [What this is not](#what-this-is-not).
+The policies are a starting point that your company reviews and adopts, not a compliance guarantee. See [What this is not](#what-this-is-not).
 
 ## Quick start
 
-Requires Node.js 18 or later. No install step — run it straight from GitHub:
+Requires Node.js 18 or later. No install step — run it with npx:
 
 ```sh
-npx github:odedmoshe/policyseed init
+npx policyseed init
 # edit intake.yaml with your company's details
-npx github:odedmoshe/policyseed build
-npx github:odedmoshe/policyseed check
+npx policyseed build
+npx policyseed check
 ```
 
 - `init` writes a commented `intake.yaml` in the current directory with every field, its
@@ -135,7 +135,7 @@ logging, who has admin access. `policyseed evidence` gathers that with the `aws`
 CLIs you already have installed and signed in, and saves it as dated JSON files plus an index:
 
 ```sh
-npx github:odedmoshe/policyseed evidence --providers aws,gcp,github \
+npx policyseed evidence --providers aws,gcp,github \
   --repo acme/app --org acme --project acme-prod
 ```
 
@@ -270,9 +270,8 @@ specific stack and adds export formats — this CLI does not include that tailor
 
 ## What this is not
 
-These are governance document templates, not legal advice, and using this tool does not by
-itself make you SOC 2 compliant or guarantee you'll pass an audit. SOC 2 compliance depends on
-whether you actually operate the controls these policies describe — access reviews happening on
+These are governance document templates, not legal advice, and not a compliance guarantee. A SOC 2
+report is an independent CPA firm's opinion, and it depends on whether you actually operate the controls these policies describe — access reviews happening on
 schedule, incidents actually being logged and triaged, backups actually being tested — not just
 on having the documents. Have a qualified person (counsel, an auditor, or an experienced
 compliance practitioner) review the output before you rely on it externally.

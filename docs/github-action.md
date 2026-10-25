@@ -11,7 +11,7 @@ fetch the package over the network. The CLI output goes to the step log and the 
 ## Quick start
 
 Put `intake.yaml` and the rendered `policies/` directory in your repository (create them with
-`npx github:odedmoshe/policyseed init` and `build`). Then add
+`npx policyseed init` and `build`). Then add
 `.github/workflows/policy-review.yml`:
 
 ```yaml
