@@ -1,7 +1,16 @@
 # policyseed
 
+[![npm](https://img.shields.io/npm/v/policyseed)](https://www.npmjs.com/package/policyseed) [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE) [![MCP Registry](https://img.shields.io/badge/MCP%20Registry-io.github.odedmoshe%2Fpolicyseed-informational)](https://registry.modelcontextprotocol.io/v0/servers?search=policyseed)
+
 Free, offline SOC 2 policy generator. `policyseed` renders 22 governance policy documents
 from a single YAML intake file, using a small template engine and zero runtime dependencies.
+
+```sh
+npx policyseed init    # writes intake.yaml: company, cloud, identity provider, MFA, team size...
+npx policyseed build   # renders the 22 policies into ./policies/
+```
+
+Prefer a browser? The same templates run at [policyseed.io/generate](https://policyseed.io/generate): 23 questions, no signup, nothing uploaded.
 
 - **Free and Apache-2.0.** Use it, fork it, modify it, ship it internally or to customers.
 - **Deterministic.** The same `intake.yaml` always produces the same Markdown. No randomness.
@@ -12,6 +21,27 @@ from a single YAML intake file, using a small template engine and zero runtime d
   when you run it.
 
 The policies are a starting point that your company reviews and adopts, not a compliance guarantee. See [What this is not](#what-this-is-not).
+
+## What the output looks like
+
+Every policy names your tools and people from the intake. An excerpt of the Access Control Policy,
+rendered by `npx policyseed build` for an example company (AWS, GitHub, Google Workspace, MFA on,
+11-50 people):
+
+> **4.3** Google Workspace is the single source of workforce identity. Business applications are
+> integrated with it for single sign-on and, where supported, automated provisioning and
+> deprovisioning; applications that cannot federate are recorded in the exception register with a
+> compensating review.
+>
+> **4.8** Access to GitHub is granted through organization membership enforced by single sign-on
+> with Google Workspace, repository permissions are assigned by team, and protected branches
+> require a review from someone other than the author before code is merged and deployed by
+> GitHub Actions. Where headcount makes this impractical, the Security Owner documents the
+> compensating review.
+
+All 22 policies share the same nine sections: purpose, scope, roles and responsibilities, numbered
+policy statements, procedures, exceptions, enforcement, review cadence and revision history. The
+numbered statements make it easy to point an auditor at the exact sentence behind a control.
 
 ## Quick start
 
