@@ -158,6 +158,14 @@ claude mcp add policyseed -- npx -y policyseed mcp
 Claude Desktop and Cursor configuration, the tool list and an example conversation are in
 [docs/mcp.md](./docs/mcp.md).
 
+### Agent skill
+
+[`skills/soc2-policies/`](./skills/soc2-policies/) is an agent skill (a `SKILL.md` plus an
+interview guide) that tells Claude Code and other skill-aware agents when to use Policyseed and
+how: interview for the intake, render with the CLI or the MCP tools, then report what to review.
+To install it for Claude Code, copy the folder into `~/.claude/skills/` (or `.claude/skills/` in a
+project).
+
 ## Collecting audit evidence
 
 Auditors ask for proof that controls are configured: branch protection, MFA, encryption at rest,
