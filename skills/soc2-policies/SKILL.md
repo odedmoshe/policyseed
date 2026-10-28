@@ -17,7 +17,7 @@ Policyseed renders 22 SOC 2 policy documents from one intake file of 23 answers 
 
 ## Steps
 
-1. **Check for an existing intake.** If `intake.yaml` exists in the working directory (or the user gave a path), read it, show the answers in a short table, and ask only what changed. Skip to step 4. Call the file you use `<intake>` from here on; it is `intake.yaml` unless the user named another path.
+1. **Check for an existing intake.** If `intake.yaml` exists in the working directory (or the user gave a path), read it, show the answers in a short table, and ask only what changed. Edit the changed values in that file in place (never run `init` over it), check them against `references/intake-guide.md`, then skip to step 4. Call the file you use `<intake>` from here on; it is `intake.yaml` unless the user named another path. On the MCP path, render from the updated file's values, so the saved intake and the policies always match.
 2. **Interview.** Ask the questions in `references/intake-guide.md`, in its order and grouped as it shows, a few at a time. Use only the allowed values listed there for choice fields. Ask before assuming. If the user does not know an answer for a required field, leave it out and tell them which field is missing; do not invent names, emails or tools.
 3. **Write the intake.**
    - CLI: run `npx -y policyseed@1 init` to create `intake.yaml`, then fill in the answers (keep the YAML comments). Set `effective_date` to today unless the user gives another date.
